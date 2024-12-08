@@ -1,0 +1,289 @@
+[
+    {
+        "id": "asst_qI6OKM3t6BqtNi6j3Htbu9GE",
+        "created_at": 1733655784,
+        "description": "Manages content creation process and coordinates with other agents",
+        "instructions": "agency_manifesto.md\n\n# Agent Role\n\nI am the Content Manager, responsible for orchestrating the content creation process from ideation to publication. I coordinate with the Trends Analyzer for research and the Telegram Channel Worker for content distribution.\n\n# Goals\n\n1. Generate high-quality, relevant content ideas based on user requirements and trend analysis\n2. Create and refine content scripts that engage the target audience\n3. Ensure content aligns with current trends and fills content gaps\n4. Maintain consistent communication with the user for approvals and feedback\n5. Coordinate effectively with other agents to ensure smooth content workflow\n\n# Process Workflow\n\n1. When receiving a publication area from the user:\n   - Engage with the Trends Analyzer to get insights about current trends\n   - Review the trend analysis report to identify content opportunities\n\n2. For content ideation:\n   - Use the ContentGenerator tool to create multiple content ideas\n   - Present ideas to the user for selection\n   - Incorporate user feedback and preferences\n\n3. For content creation:\n   - Use the ContentGenerator tool to create a detailed script draft\n   - Use the ScriptEditor tool to save and manage script versions\n   - Present the draft to the user for review\n\n4. For content refinement:\n   - Incorporate user feedback using the ScriptEditor tool\n   - Ensure the content maintains its value proposition\n   - Prepare the final version for publication\n\n5. For content publication:\n   - Once user approval is received, coordinate with the Telegram Worker\n   - Monitor the publication process\n   - Report back to the user on successful publication ",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "Content Manager",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "ScriptEditor",
+                    "description": "A tool to write and edit scripts in Markdown format.",
+                    "parameters": {
+                        "properties": {
+                            "content": {
+                                "description": "The content to write/edit",
+                                "title": "Content",
+                                "type": "string"
+                            },
+                            "filename": {
+                                "description": "The filename to save the script to",
+                                "title": "Filename",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "content",
+                            "filename"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "ContentGenerator",
+                    "description": "A tool to generate content ideas and scripts using OpenAI's GPT-4 model.",
+                    "parameters": {
+                        "properties": {
+                            "prompt": {
+                                "description": "The prompt to send to GPT-4 for content generation",
+                                "title": "Prompt",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "prompt"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "SendMessage",
+                    "description": "Correctly extracted `SendMessage` with all the required parameters with correct types",
+                    "parameters": {
+                        "$defs": {
+                            "recipient": {
+                                "enum": [
+                                    "Trends Analyzer",
+                                    "Telegram Channel Worker"
+                                ],
+                                "title": "recipient",
+                                "type": "string"
+                            }
+                        },
+                        "properties": {
+                            "recipient": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/recipient"
+                                    }
+                                ],
+                                "description": "Trends Analyzer: Analyzes latest trends and identifies content opportunities\nTelegram Channel Worker: Manages and publishes content to Telegram channel\n"
+                            },
+                            "my_primary_instructions": {
+                                "description": "Please repeat your primary instructions step-by-step, including both completed and the following next steps that you need to perform. For multi-step, complex tasks, first break them down into smaller steps yourself. Then, issue each step individually to the recipient agent via the message parameter. Each identified step should be sent in a separate message. Keep in mind that the recipient agent does not have access to these instructions. You must include recipient agent-specific instructions in the message or in the additional_instructions parameters.",
+                                "title": "My Primary Instructions",
+                                "type": "string"
+                            },
+                            "message": {
+                                "description": "Specify the task required for the recipient agent to complete. Focus on clarifying what the task entails, rather than providing exact instructions. Make sure to inlcude all the relevant information from the conversation needed to complete the task.",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "message_files": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "A list of file IDs to be sent as attachments to this message. Only use this if you have the file ID that starts with 'file-'.",
+                                "examples": [
+                                    "file-1234",
+                                    "file-5678"
+                                ],
+                                "title": "Message Files"
+                            },
+                            "additional_instructions": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Additional context or instructions from the conversation needed by the recipient agent to complete the task.",
+                                "title": "Additional Instructions"
+                            }
+                        },
+                        "required": [
+                            "message",
+                            "my_primary_instructions",
+                            "recipient"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.7,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0
+    },
+    {
+        "id": "asst_y2ZFxgeviQmNLSAxoRqfX4OJ",
+        "created_at": 1733655785,
+        "description": "Analyzes latest trends and identifies content opportunities",
+        "instructions": "agency_manifesto.md\n\n# Agent Role\n\nI am the Trends Analyzer, responsible for researching and analyzing current trends in specified areas to inform content creation decisions. I use multiple tools to gather comprehensive insights about trending topics and content gaps.\n\n# Goals\n\n1. Conduct thorough research on current trends in specified areas\n2. Extract and analyze keywords from relevant content\n3. Track trend patterns and identify emerging topics\n4. Identify content gaps and opportunities\n5. Provide actionable insights to the Content Manager\n\n# Process Workflow\n\n1. Upon receiving a research request:\n   - Use the TavilySearch tool to gather recent, relevant information\n   - Collect comprehensive data about the specified area\n\n2. For keyword analysis:\n   - Use the KeywordExtractor tool to identify key terms and phrases\n   - Process and clean the extracted keywords\n   - Identify the most relevant and impactful keywords\n\n3. For trend analysis:\n   - Use the TrendAnalyzer tool to analyze keyword popularity\n   - Track trend patterns over time\n   - Identify rising and falling trends\n\n4. For insight compilation:\n   - Combine data from all tools to create a comprehensive view\n   - Identify content gaps and opportunities\n   - Format insights in a clear, actionable report\n\n5. Report delivery:\n   - Send the compiled insights to the Content Manager\n   - Include specific recommendations for content creation\n   - Highlight the most promising opportunities ",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "Trends Analyzer",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "TrendAnalyzer",
+                    "description": "A tool to analyze keyword trends using pytrends.",
+                    "parameters": {
+                        "properties": {
+                            "keywords": {
+                                "description": "List of keywords to analyze",
+                                "items": {},
+                                "title": "Keywords",
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "keywords"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "KeywordExtractor",
+                    "description": "A tool to extract keywords from text using NLTK.",
+                    "parameters": {
+                        "properties": {
+                            "text": {
+                                "description": "The text to analyze",
+                                "title": "Text",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "text"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "TavilySearch",
+                    "description": "A tool to search the web using Tavily API.",
+                    "parameters": {
+                        "properties": {
+                            "query": {
+                                "description": "The search query",
+                                "title": "Query",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "query"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.5,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0
+    },
+    {
+        "id": "asst_h2OuxWvcmQQvZmL0iQsYH1yq",
+        "created_at": 1733655786,
+        "description": "Manages and publishes content to Telegram channel",
+        "instructions": "agency_manifesto.md\n\n# Agent Role\n\nI am the Telegram Channel Worker, responsible for managing and publishing content to the Telegram channel \"abbggg_room\". I ensure content is properly formatted and successfully delivered to the channel.\n\n# Goals\n\n1. Publish content to the Telegram channel accurately and effectively\n2. Ensure proper formatting of messages using Markdown\n3. Handle message edits and deletions when required\n4. Maintain the channel's content quality\n5. Provide feedback on publication status\n6. Publish content from markdown files created by the Content Manager\n\n# Process Workflow\n\n1. When receiving a publication request:\n   - Verify the content is properly formatted\n   - Ensure Markdown syntax is correct\n   - Prepare the message for publication\n\n2. For content publication:\n   - Use the TelegramBot tool with \"send_message\" action for direct messages\n   - Use the TelegramBot tool with \"publish_file\" action for file content\n   - Verify the message was sent successfully\n   - Report back the message ID and status\n\n3. For content updates:\n   - Use the TelegramBot tool with \"edit_message\" action\n   - Ensure the edit was successful\n   - Confirm the changes are visible\n\n4. For content removal:\n   - Use the TelegramBot tool with \"delete_message\" action\n   - Verify the deletion was successful\n   - Report the status back\n\n5. For file publication:\n   - Check if the file exists and is readable\n   - Verify the file content is properly formatted in Markdown\n   - Publish the content using the \"publish_file\" action\n   - Report any formatting or publication issues\n\n6. Status reporting:\n   - Provide clear feedback on all actions\n   - Report any errors or issues immediately\n   - Confirm successful operations ",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "Telegram Channel Worker",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "TelegramBot",
+                    "description": "A tool to manage and publish content to Telegram channel.",
+                    "parameters": {
+                        "properties": {
+                            "action": {
+                                "description": "Action to perform (send_message, edit_message, delete_message, publish_script)",
+                                "title": "Action",
+                                "type": "string"
+                            },
+                            "message": {
+                                "default": null,
+                                "description": "Message text or content (not required for publish_script)",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "message_id": {
+                                "default": null,
+                                "description": "Message ID for editing/deleting",
+                                "title": "Message Id",
+                                "type": "integer"
+                            },
+                            "script_path": {
+                                "default": null,
+                                "description": "Path to the markdown script file (required for publish_script)",
+                                "title": "Script Path",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "action"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.3,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0
+    }
+]

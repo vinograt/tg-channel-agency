@@ -1,0 +1,7 @@
+agency-swarm
+openai
+python-dotenv
+tavily-python
+nltk
+pytrends
+requests 
